@@ -36,13 +36,14 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          # Lakukan pull untuk sinkronisasi sebelum push
           git pull
           
           if [ -n "$(git status --porcelain mlruns/)" ]; then
             git add mlruns/
-            # Pastikan .gitattributes juga ter-commit jika berubah
-            git add .gitattributes
+            # Tambahkan .gitattributes hanya jika berkasnya ada
+            if [ -f .gitattributes ]; then
+              git add .gitattributes
+            fi
             git commit -m "Save mlruns from CI run"
             git push
           else
