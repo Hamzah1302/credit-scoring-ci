@@ -1,0 +1,14 @@
+artifact_uri: file:///home/runner/work/credit-scoring-ci/credit-scoring-ci/mlruns/0/e8ee822b183f4528af8fe34547575774/artifacts
+end_time: 1750577742230
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: e8ee822b183f4528af8fe34547575774
+run_name: abrasive-bat-514
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1750577668091
+status: 3
+tags: []
+user_id: runner
