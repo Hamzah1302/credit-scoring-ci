@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches:
+    main:
       - main # atau master, sesuaikan dengan nama branch utama Anda
 
 jobs:
