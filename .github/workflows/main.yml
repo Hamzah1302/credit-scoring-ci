@@ -28,7 +28,6 @@ jobs:
       - name: Run mlflow project
         run: |
           # Pindah ke direktori yang benar dan jalankan
-          cd "Latihan-CI"
           mlflow run MLproject --env-manager=local
 
       - name: Save mlruns to repo
