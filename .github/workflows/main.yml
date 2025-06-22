@@ -2,45 +2,47 @@ name: CI
 
 on:
   push:
-    main:
-      - main # atau master, sesuaikan dengan nama branch utama Anda
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    # 1. Tambahkan izin untuk menulis ke repositori agar 'git push' berhasil
     permissions:
       contents: write
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repository with LFS
         uses: actions/checkout@v3
+        with:
+          lfs: true # Tambahkan baris ini untuk mengaktifkan LFS saat checkout
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12" # Versi spesifik seperti .7 tidak selalu diperlukan
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # 2. Install semua library yang dibutuhkan oleh script Anda
           pip install mlflow pandas scikit-learn numpy
 
       - name: Run mlflow project
         run: |
-          # Menjalankan mlflow dengan menunjuk ke direktori proyek yang benar
           mlflow run MLproject --env-manager=local
 
       - name: Save mlruns to repo
         run: |
-          # 3. Konfigurasi git dengan user default dari GitHub Actions
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          # 4. Cek apakah ada perubahan di folder mlruns sebelum commit
+          # Lakukan pull untuk sinkronisasi sebelum push
+          git pull
+          
           if [ -n "$(git status --porcelain mlruns/)" ]; then
             git add mlruns/
+            # Pastikan .gitattributes juga ter-commit jika berubah
+            git add .gitattributes
             git commit -m "Save mlruns from CI run"
             git push
           else
