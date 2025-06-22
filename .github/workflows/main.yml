@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository with LFS
+        uses: actions/checkout@v3
+        with:
+          lfs: true # Tambahkan baris ini untuk mengaktifkan LFS saat checkout
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mlflow pandas scikit-learn numpy
+
+      - name: Run mlflow project
+        run: |
+          mlflow run MLproject --env-manager=local
+
+      - name: Save mlruns to repo
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # Lakukan pull untuk sinkronisasi sebelum push
+          git pull
+          
+          if [ -n "$(git status --porcelain mlruns/)" ]; then
+            git add mlruns/
+            # Pastikan .gitattributes juga ter-commit jika berubah
+            git add .gitattributes
+            git commit -m "Save mlruns from CI run"
+            git push
+          else
+            echo "No changes in mlruns to commit."
+          fi
